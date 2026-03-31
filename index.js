@@ -7,53 +7,55 @@ let server = express();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-server.use(express.urlencoded({extended : false}))
+server.use(express.urlencoded({ extended: false }))
 
 // server.use(express.static(path.join(__dirname, 'public')));
 
-server.get('/', (req, res)=>{
+server.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 })
-server.get('/about', (req, res)=>{
+server.get('/about', (req, res) => {
     res.sendFile(path.join(__dirname, 'about.html'));
 })
-server.get('/contact', (req, res)=>{
+server.get('/contact', (req, res) => {
     res.sendFile(path.join(__dirname, 'contact.html'));
 })
-server.get('/login', (req, res)=>{
+server.get('/login', (req, res) => {
     res.sendFile(path.join(__dirname, 'login.html'));
 })
-server.get('/signup', (req, res)=>{
+server.get('/signup', (req, res) => {
     res.sendFile(path.join(__dirname, 'signup.html'));
 })
 
 
-server.post('/contact-submit',(req,res)=>{
-    fs.readFile('contact.txt','utf-8',(err,data)=>{
-        if(err) console.log(err)
-            else{
-        let contact_query=JSON.parse(data)
-    contact_query.push(req.body)
-fs.writeFile('contact.txt',JSON.stringify(contact_query),(err)=>{
-    if(err) console.log(err)
-        else{
-    res.sendFile(path.join(__dirname, 'contact.html'));
-}
-            })}
+server.post('/contact-submit', (req, res) => {
+    fs.readFile('contact.txt', 'utf-8', (err, data) => {
+        if (err) console.log(err)
+        else {
+            let contact_query = JSON.parse(data)
+            contact_query.push(req.body)
+            fs.writeFile('contact.txt', JSON.stringify(contact_query), (err) => {
+                if (err) console.log(err)
+                else {
+                    res.sendFile(path.join(__dirname, 'contact.html'));
+                }
+            })
+        }
     })
 });
-server.post('/login-submit',(req,res)=>{
-    fs.readFile('login.txt','utf-8',(err,data)=>{
-        if(err) console.log(err)
-            else{
-        let contact_query=JSON.parse(data)
-    contact_query.push(req.body)
-fs.writeFile('login.txt',JSON.stringify(contact_query),(err)=>{
-    if(err) console.log(err)
-        else{
-    res.sendFile(path.join(__dirname, 'login.html'));
-}
-            })}
+server.post('/login-submit', (req, res) => {
+    fs.readFile('login.txt', 'utf-8', (err, data) => {
+        if (err) console.log(err)
+        else {
+            let contact_query = JSON.parse(data)
+            contact_query.push(req.body)
+            fs.writeFile('login.txt', JSON.stringify(contact_query), (err) => {
+                if (err) console.log(err)
+                else {
+                    res.sendFile(path.join(__dirname, 'login.html'));
+                }
+            })
+        }
     })
 });
 // server.post('/signup-submit',(req,res)=>{
@@ -78,7 +80,7 @@ server.post('/signup-submit', (req, res) => {
         if (!err && data) {
             try {
                 users = JSON.parse(data);
-            } catch {}
+            } catch { }
         }
 
         const exists = users.find(user => user.email === req.body.email);
@@ -110,7 +112,7 @@ server.post('/signup-submit', (req, res) => {
 });
 
 
-server.listen(3000, ()=>{
+server.listen(3000, () => {
     console.log("Server: http://localhost:3000")
 })
 
