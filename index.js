@@ -8,6 +8,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 server.use(express.urlencoded({ extended: false }))
+server.use(express.static(__dirname));
 
 // server.use(express.static(path.join(__dirname, 'public')));
 
@@ -109,6 +110,29 @@ server.post('/signup-submit', (req, res) => {
         });
     });
 });
+
+
+let resultEnergy = 0;
+server.post('/predict', (req, res) => {
+    const { area, efficiency, irradiance, pr } = req.body;
+
+    const A = parseFloat(area);
+    const r = parseFloat(efficiency);
+    const H = parseFloat(irradiance);
+    const PR = parseFloat(pr);
+
+    resultEnergy = A * r * H * PR;
+
+    res.redirect(`/result.html?energy=${resultEnergy}`);
+});
+server.get('/result', (req, res) => {
+    res.send(`
+        <h1>Predicted Energy</h1>
+        <h2>${resultEnergy.toFixed(2)} kWh/day</h2>
+        <a href="/">Go Back</a>
+    `);
+});
+
 
 
 server.listen(3000, () => {

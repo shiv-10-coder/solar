@@ -1,0 +1,98 @@
+<!-- <h1 id="result">Result</h1>
+
+<script>
+    const params = new URLSearchParams(window.location.search);
+    document.getElementById("result").innerText =
+        params.get("energy") + " kWh/day";
+</script> -->
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Prediction Result</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #020617, #0f172a);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .card {
+            background: #020617;
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 0 30px rgba(56, 189, 248, 0.2);
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            color: #38bdf8;
+        }
+
+        .energy {
+            font-size: 3rem;
+            margin: 20px 0;
+            font-weight: bold;
+        }
+
+        .unit {
+            font-size: 1.2rem;
+            color: #94a3b8;
+        }
+
+        a {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: #38bdf8;
+            color: black;
+            text-decoration: none;
+            border-radius: 10px;
+            transition: 0.3s;
+        }
+
+        a:hover {
+            background: #0ea5e9;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h1>Solar Energy Prediction</h1>
+
+    <div class="energy" id="energyValue">--</div>
+    <div class="unit">kWh / day</div>
+
+    <a href="/">🔄 Calculate Again</a>
+</div>
+
+<script>
+    const params = new URLSearchParams(window.location.search);
+    const energy = params.get("energy");
+
+    if (energy) {
+        document.getElementById("energyValue").innerText =
+            parseFloat(energy).toFixed(2);
+    } else {
+        document.getElementById("energyValue").innerText = "No Data";
+    }
+</script>
+
+</body>
+</html>
