@@ -44,21 +44,65 @@ server.post('/contact-submit', (req, res) => {
         }
     })
 });
+
 server.post('/login-submit', (req, res) => {
-    fs.readFile('login.txt', 'utf-8', (err, data) => {
-        if (err) console.log(err)
-        else {
-            let contact_query = JSON.parse(data)
-            contact_query.push(req.body)
-            fs.writeFile('login.txt', JSON.stringify(contact_query), (err) => {
-                if (err) console.log(err)
-                else {
-                    res.sendFile(path.join(__dirname, 'login.html'));
-                }
-            })
+    fs.readFile('signup.txt', 'utf-8', (err, data) => {
+
+        let users = [];
+
+        // handle file not found or empty
+        if (!err && data) {
+            users = JSON.parse(data);
         }
-    })
+
+        const { name, email } = req.body;
+
+        // 🔍 check if user exists
+        const user = users.find(u =>
+            u.email === email
+        );
+
+        if (!user) {
+            return res.send(`
+                <script>
+                    alert("User not found! Please signup.");
+                    window.location.href = "/signup";
+                </script>
+            `);
+        }
+
+        // ✅ success → redirect to home
+        res.send(`
+            <script>
+                alert("Login successful!");
+                window.location.href = "/";
+            </script>
+        `);
+    });
 });
+
+
+
+// server.post('/login-submit', (req, res) => {
+//     fs.readFile('login.txt', 'utf-8', (err, data) => {
+//         if (err) console.log(err)
+//         else {
+//             let contact_query = JSON.parse(data)
+//             contact_query.push(req.body)
+            
+//             fs.writeFile('login.txt', JSON.stringify(contact_query), (err) => {
+//                 if (err) console.log(err)
+//                 else {
+//                     res.sendFile(path.join(__dirname, 'login.html'));
+//                 }
+//             })
+//         }
+//     })
+// });
+
+
+
+
 // server.post('/signup-submit',(req,res)=>{
 //     fs.readFile('signup.txt','utf-8',(err,data)=>{
 //         if(err) console.log(err)

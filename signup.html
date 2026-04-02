@@ -1,42 +1,34 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
     <title>Signup</title>
-    <style>
-        body { margin: 0; font-family: Arial; background: #0f172a; color: white; }
-        nav { background: #020617; padding: 15px; }
-        nav a { color: #38bdf8; margin: 10px; text-decoration: none; }
-        .container { padding: 50px; text-align: center; }
-        input {
-            width: 250px;
-            padding: 10px;
-            margin: 10px;
-        }
-        button {
-            padding: 10px 20px;
-            background: #38bdf8;
-            border: none;
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <nav>
-    <a href="/">Home</a>
-    <a href="/about">About</a>
-    <a href="/contact">Contact</a>
-    <a href="/login">Login</a>
-    <a href="/signup">Signup</a>
+    <h2>EnergyPredict</h2>
+    <div>
+        <a href="/">Home</a>
+        <a href="/about">About</a>
+        <a href="/contact">Contact</a>
+        <a href="/login">Login</a>
+        <a href="/signup">Signup</a>
+    </div>
 </nav>
 
-<div class="container">
-    <h1>Signup</h1>
-    <form action="/signup-submit" method="post">
-        <input type="text" placeholder="Your Name" name="name">
-        <input type="email" placeholder="Your Email" name="email">
-        <button>Send</button>
+<div class="hero fade-in">
+    <h1>Create Account</h1>
+</div>
+
+<div class="card fade-in">
+
+    <form action="/signup-submit" method="POST">
+        <input type="text" name="name" placeholder="Name" required>
+        <input type="email" name="email" placeholder="Email" required>
+        <button type="submit">Signup</button>
     </form>
+
 </div>
 
 </body>
