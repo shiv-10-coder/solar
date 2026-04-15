@@ -22,19 +22,73 @@
     <p>Estimate renewable energy using smart parameters</p>
 </div>
 
+<!-- ☀️ SOLAR -->
 <div class="card fade-in">
     <h2>Solar Energy Prediction</h2>
 
-    <!-- 🔥 IMPORTANT: FORM (backend connection) -->
     <form action="/predict" method="POST">
         <input type="number" name="area" placeholder="Area (m²)" required>
-        <input type="number" step="0.01" name="efficiency" placeholder="Efficiency (0.15-0.22)" required>
-        <input type="number" step="0.01" name="irradiance" placeholder="Irradiance (kWh/m²/day)" required>
-        <input type="number" step="0.01" name="pr" placeholder="Performance Ratio (0.75-0.85)" required>
+        <small>Total panel surface area</small>
+
+        <input type="number" step="0.01" name="efficiency" placeholder="Efficiency" required>
+        <small>Panel efficiency (0.15–0.22)</small>
+
+        <input type="number" step="0.01" name="irradiance" placeholder="Irradiance" required>
+        <small>Sunlight per day</small>
+
+        <input type="number" step="0.01" name="pr" placeholder="Performance Ratio" required>
+        <small>System loss factor</small>
 
         <button type="submit">Calculate</button>
     </form>
 </div>
+
+<!-- 🌬️ WIND -->
+<div class="card fade-in">
+    <h2>Wind Energy Prediction</h2>
+
+    <form action="/predict-wind" method="POST">
+        <input type="number" name="area" placeholder="Rotor Area" required>
+        <small>Blade swept area</small>
+
+        <input type="number" step="0.01" name="airDensity" placeholder="Air Density" required>
+        <small>Usually 1.225</small>
+
+        <input type="number" step="0.01" name="velocity" placeholder="Wind Speed" required>
+        <small>Wind speed in m/s</small>
+
+        <input type="number" step="0.01" name="cp" placeholder="Power Coefficient" required>
+        <small>0.3–0.5</small>
+
+        <input type="number" step="0.01" name="efficiency" placeholder="Efficiency" required>
+        <small>Generator efficiency</small>
+
+        <button type="submit">Calculate</button>
+    </form>
+</div>
+
+<!-- 🔥 SCRIPT (IMPORTANT) -->
+<script>
+    const params = new URLSearchParams(window.location.search);
+    const user = params.get("user");
+
+    if (user) {
+        // update all links
+        document.querySelectorAll("a").forEach(link => {
+            if (!link.href.includes("login") && !link.href.includes("signup")) {
+                link.href += `?user=${user}`;
+            }
+        });
+
+        // update all forms
+        document.querySelectorAll("form").forEach(form => {
+            form.action += `?user=${user}`;
+        });
+    } else {
+        // not logged in → redirect
+        window.location.href = "/login";
+    }
+</script>
 
 </body>
 </html>
