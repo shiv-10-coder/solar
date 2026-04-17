@@ -7,7 +7,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { NeuralNetwork, Normalizer } from './neuralNetwork.js';
-import { generateAndSave } from '../data/generateData.js';
+import { generateSolarData, generateWindData } from '../data/generateData.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -25,17 +25,20 @@ export let modelStatus = { solar: 'not_trained', wind: 'not_trained', solarInfo:
 export async function trainModels() {
   console.log('\n🧠 Starting ML Model Training...\n');
 
-  // ── Generate data if not exists ──
+  // ── Generate data if not exists (Vercel Serverless mode) ──
   const solarPath = path.join(dataDir, 'solar_training.json');
   const windPath = path.join(dataDir, 'wind_training.json');
 
-  if (!fs.existsSync(solarPath) || !fs.existsSync(windPath)) {
-    console.log('📊 Generating training data...');
-    generateAndSave();
-  }
+  let solarData, windData;
 
-  const solarData = JSON.parse(fs.readFileSync(solarPath, 'utf-8'));
-  const windData = JSON.parse(fs.readFileSync(windPath, 'utf-8'));
+  if (!fs.existsSync(solarPath) || !fs.existsSync(windPath)) {
+    console.log('📊 Generating training data in-memory (Serverless mode)...');
+    solarData = generateSolarData(600);
+    windData = generateWindData(600);
+  } else {
+    solarData = JSON.parse(fs.readFileSync(solarPath, 'utf-8'));
+    windData = JSON.parse(fs.readFileSync(windPath, 'utf-8'));
+  }
 
   // ── TRAIN SOLAR MODEL ──
   console.log('☀️ Training Solar Energy Model...');
