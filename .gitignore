@@ -1,4 +1,22 @@
+# Dependencies
 node_modules/
+
+# Environment
 .env
-*.txt
-/generated/prisma
+
+# Build output
+client/dist/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# IDE
+.vscode/
+.idea/
+
+# Training data (generated)
+server/data/*.json
