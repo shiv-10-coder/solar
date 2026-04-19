@@ -1,5 +1,6 @@
-import mongoose from 'mongoose';
+const mongoose = require('mongoose');
 
+// Contact schema - stores contact form submissions
 const contactSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -19,4 +20,4 @@ const contactSchema = new mongoose.Schema({
   timestamps: true
 });
 
-export default mongoose.model('Contact', contactSchema);
+module.exports = mongoose.model('Contact', contactSchema);

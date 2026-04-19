@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EnergyPredict - City Predictions</title>
+  <meta name="description" content="Pre-computed Solar and Wind Energy Predictions for Major Cities">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    @keyframes neonPulse {
+      0%, 100% { text-shadow: 0 0 7px rgba(0,240,255,0.5), 0 0 20px rgba(0,240,255,0.3); }
+      50% { text-shadow: 0 0 12px rgba(0,240,255,0.8), 0 0 35px rgba(0,240,255,0.5); }
+    }
+    .neon-text { animation: neonPulse 3s ease-in-out infinite; }
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+    .fade-in-up { animation: fadeInUp 0.6s ease forwards; }
+    @keyframes slideDown { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+    .float-anim { animation: float 3s ease-in-out infinite; }
+  </style>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+    }
+  </script>
+  <script src="/js/theme.js"></script>
+</head>
+<body class="min-h-screen bg-gray-50 text-gray-900 dark:bg-[#050510] dark:text-gray-200 transition-colors duration-300">
+
+  <nav id="navbar" class="sticky top-0 z-[99] bg-white/85 dark:bg-gray-900/85 backdrop-blur-xl border-b border-gray-200 dark:border-white/5 transition-colors duration-300" style="transform: translateZ(0);"></nav>
+
+  <div class="max-w-5xl mx-auto px-4 py-10">
+    <!-- Header -->
+    <div class="text-center mb-8 fade-in-up">
+      <h1 class="text-3xl md:text-4xl font-bold text-cyan-600 dark:text-cyan-400 dark:neon-text mb-3" style="font-family: 'Orbitron', sans-serif;">
+        🏙️ City Predictions
+      </h1>
+      <p class="text-gray-600 dark:text-gray-400">Pre-computed solar & wind energy data for major cities</p>
+    </div>
+
+    <!-- City Selector -->
+    <div class="flex justify-center mb-8">
+      <select id="citySelect" onchange="showCity()"
+        class="px-6 py-3 rounded-xl bg-white dark:bg-gray-800/70 border border-gray-300 dark:border-cyan-500/30 text-cyan-700 dark:text-cyan-400 text-sm font-semibold outline-none cursor-pointer focus:ring-2 focus:ring-cyan-500/30 dark:focus:ring-cyan-400/30 min-w-[250px] transition-colors duration-300 shadow-sm dark:shadow-none"
+        style="font-family: 'Orbitron', sans-serif;">
+        <option value="">-- Select a City --</option>
+      </select>
+    </div>
+
+    <!-- City Info + Results -->
+    <div id="cityContent" class="hidden">
+      <!-- City Header -->
+      <div class="bg-white border border-gray-200 dark:bg-gray-800/50 dark:border-white/10 rounded-2xl p-6 mb-8 backdrop-blur-xl flex items-center gap-5 fade-in-up transition-colors duration-300 shadow-sm dark:shadow-none">
+        <span id="cityFlag" class="text-5xl"></span>
+        <div>
+          <h2 id="cityName" class="text-2xl font-bold text-cyan-600 dark:text-cyan-400" style="font-family: 'Orbitron', sans-serif;"></h2>
+          <p id="cityMeta" class="text-gray-600 dark:text-gray-400 text-sm mt-1"></p>
+          <p id="cityClimate" class="text-gray-500 text-xs italic mt-0.5"></p>
+        </div>
+      </div>
+
+      <!-- Solar & Wind Cards -->
+      <div class="grid md:grid-cols-2 gap-6 mb-8">
+        <!-- Solar Card -->
+        <div class="bg-white border border-yellow-200 dark:bg-gray-800/50 dark:border-yellow-500/20 border-t-2 border-t-yellow-500 dark:border-t-yellow-400 rounded-2xl p-7 backdrop-blur-xl text-center fade-in-up transition-colors duration-300 shadow-sm dark:shadow-none">
+          <div class="text-4xl mb-2 float-anim">☀️</div>
+          <h3 class="text-lg font-bold text-yellow-600 dark:text-yellow-400 mb-3" style="font-family: 'Orbitron', sans-serif;">Solar Energy</h3>
+          <div id="solarValue" class="text-4xl font-black text-yellow-500 dark:text-yellow-400 my-3" style="font-family: 'Orbitron', sans-serif; text-shadow: 0 0 18px rgba(255,230,0,0.15);"></div>
+          <div id="solarUnit" class="text-gray-600 dark:text-gray-400 mb-5"></div>
+          <div class="text-left border-t border-gray-100 dark:border-white/10 pt-3 transition-colors duration-300">
+            <h4 class="text-xs uppercase tracking-widest text-gray-500 mb-2" style="font-family: 'Orbitron', sans-serif;">Parameters</h4>
+            <div id="solarParams"></div>
+          </div>
+        </div>
+
+        <!-- Wind Card -->
+        <div class="bg-white border border-cyan-200 dark:bg-gray-800/50 dark:border-cyan-500/20 border-t-2 border-t-cyan-500 dark:border-t-cyan-400 rounded-2xl p-7 backdrop-blur-xl text-center fade-in-up transition-colors duration-300 shadow-sm dark:shadow-none">
+          <div class="text-4xl mb-2 float-anim">🌬️</div>
+          <h3 class="text-lg font-bold text-cyan-600 dark:text-cyan-400 mb-3" style="font-family: 'Orbitron', sans-serif;">Wind Energy</h3>
+          <div id="windValue" class="text-4xl font-black text-cyan-500 dark:text-cyan-400 my-3" style="font-family: 'Orbitron', sans-serif; text-shadow: 0 0 18px rgba(0,240,255,0.15);"></div>
+          <div id="windUnit" class="text-gray-600 dark:text-gray-400 mb-5"></div>
+          <div class="text-left border-t border-gray-100 dark:border-white/10 pt-3 transition-colors duration-300">
+            <h4 class="text-xs uppercase tracking-widest text-gray-500 mb-2" style="font-family: 'Orbitron', sans-serif;">Parameters</h4>
+            <div id="windParams"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Comparison Bar -->
+      <div class="bg-white border border-gray-200 dark:bg-gray-800/50 dark:border-white/10 rounded-2xl p-7 backdrop-blur-xl fade-in-up transition-colors duration-300 shadow-sm dark:shadow-none">
+        <h3 class="text-center text-lg font-bold text-cyan-600 dark:text-cyan-400 mb-5" style="font-family: 'Orbitron', sans-serif;">
+          ⚡ Energy Comparison
+        </h3>
+        <div class="space-y-5">
+          <div class="flex items-center gap-4">
+            <span class="text-sm text-gray-600 dark:text-gray-400 w-16">☀️ Solar</span>
+            <div class="flex-1 h-5 bg-gray-100 dark:bg-cyan-500/5 border border-gray-200 dark:border-white/10 rounded-full overflow-hidden transition-colors duration-300">
+              <div id="solarBar" class="h-full rounded-full bg-gradient-to-r from-yellow-400 to-orange-500 transition-all duration-1000" style="box-shadow: 0 0 12px rgba(255,230,0,0.3);"></div>
+            </div>
+            <span id="solarBarLabel" class="text-sm font-bold text-yellow-600 dark:text-yellow-400 w-32 text-right" style="font-family: 'Orbitron', sans-serif;"></span>
+          </div>
+          <div class="flex items-center gap-4">
+            <span class="text-sm text-gray-600 dark:text-gray-400 w-16">🌬️ Wind</span>
+            <div class="flex-1 h-5 bg-gray-100 dark:bg-cyan-500/5 border border-gray-200 dark:border-white/10 rounded-full overflow-hidden transition-colors duration-300">
+              <div id="windBar" class="h-full rounded-full bg-gradient-to-r from-cyan-400 to-blue-600 transition-all duration-1000" style="box-shadow: 0 0 12px rgba(0,240,255,0.3);"></div>
+            </div>
+            <span id="windBarLabel" class="text-sm font-bold text-cyan-600 dark:text-cyan-400 w-32 text-right" style="font-family: 'Orbitron', sans-serif;"></span>
+          </div>
+        </div>
+        <p id="compNote" class="text-center text-sm text-gray-600 dark:text-gray-400 mt-5 leading-relaxed"></p>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/auth.js"></script>
+  <script src="/js/navbar.js"></script>
+  <script>
+    // Pre-computed city data (hardcoded - no API call needed)
+    const CITY_DATA = {
+      'Delhi': {
+        flag: '🇮🇳', country: 'India', coords: '28.6°N, 77.2°E', climate: 'Semi-arid, hot summers',
+        solar: { energy: 41.25, unit: 'kWh/day', params: { 'Panel Area (m²)': 50, 'Efficiency': 0.20, 'Irradiance (kWh/m²/day)': 5.5, 'Performance Ratio': 0.75, 'Temperature (°C)': 35, 'Humidity (%)': 45, 'Cloud Cover (%)': 25 } },
+        wind: { energy: 529.2, unit: 'Watts', params: { 'Rotor Area (m²)': 8000, 'Air Density (kg/m³)': 1.164, 'Wind Speed (m/s)': 4.5, 'Power Coefficient': 0.35, 'Generator Efficiency': 0.90, 'Temperature (°C)': 35, 'Altitude (m)': 216, 'Turbulence Intensity': 0.18 } }
+      },
+      'New York': {
+        flag: '🇺🇸', country: 'USA', coords: '40.7°N, 74.0°W', climate: 'Humid subtropical, four seasons',
+        solar: { energy: 30.60, unit: 'kWh/day', params: { 'Panel Area (m²)': 50, 'Efficiency': 0.20, 'Irradiance (kWh/m²/day)': 4.2, 'Performance Ratio': 0.73, 'Temperature (°C)': 18, 'Humidity (%)': 63, 'Cloud Cover (%)': 45 } },
+        wind: { energy: 2381.4, unit: 'Watts', params: { 'Rotor Area (m²)': 8000, 'Air Density (kg/m³)': 1.225, 'Wind Speed (m/s)': 6.5, 'Power Coefficient': 0.40, 'Generator Efficiency': 0.90, 'Temperature (°C)': 18, 'Altitude (m)': 10, 'Turbulence Intensity': 0.14 } }
+      },
+      'London': {
+        flag: '🇬🇧', country: 'UK', coords: '51.5°N, 0.1°W', climate: 'Temperate maritime, cloudy',
+        solar: { energy: 19.35, unit: 'kWh/day', params: { 'Panel Area (m²)': 50, 'Efficiency': 0.19, 'Irradiance (kWh/m²/day)': 2.9, 'Performance Ratio': 0.70, 'Temperature (°C)': 12, 'Humidity (%)': 75, 'Cloud Cover (%)': 65 } },
+        wind: { energy: 3920.4, unit: 'Watts', params: { 'Rotor Area (m²)': 8000, 'Air Density (kg/m³)': 1.240, 'Wind Speed (m/s)': 7.8, 'Power Coefficient': 0.42, 'Generator Efficiency': 0.90, 'Temperature (°C)': 12, 'Altitude (m)': 11, 'Turbulence Intensity': 0.12 } }
+      },
+      'Amritsar': {
+        flag: '🇮🇳', country: 'India', coords: '31.6°N, 74.9°E', climate: 'Semi-arid, extreme seasons',
+        solar: { energy: 38.70, unit: 'kWh/day', params: { 'Panel Area (m²)': 50, 'Efficiency': 0.19, 'Irradiance (kWh/m²/day)': 5.4, 'Performance Ratio': 0.75, 'Temperature (°C)': 32, 'Humidity (%)': 40, 'Cloud Cover (%)': 20 } },
+        wind: { energy: 422.1, unit: 'Watts', params: { 'Rotor Area (m²)': 8000, 'Air Density (kg/m³)': 1.180, 'Wind Speed (m/s)': 4.2, 'Power Coefficient': 0.35, 'Generator Efficiency': 0.88, 'Temperature (°C)': 32, 'Altitude (m)': 234, 'Turbulence Intensity': 0.16 } }
+      },
+      'Tokyo': {
+        flag: '🇯🇵', country: 'Japan', coords: '35.7°N, 139.7°E', climate: 'Humid subtropical, monsoon',
+        solar: { energy: 27.00, unit: 'kWh/day', params: { 'Panel Area (m²)': 50, 'Efficiency': 0.20, 'Irradiance (kWh/m²/day)': 3.6, 'Performance Ratio': 0.75, 'Temperature (°C)': 22, 'Humidity (%)': 68, 'Cloud Cover (%)': 40 } },
+        wind: { energy: 1814.4, unit: 'Watts', params: { 'Rotor Area (m²)': 8000, 'Air Density (kg/m³)': 1.220, 'Wind Speed (m/s)': 5.8, 'Power Coefficient': 0.38, 'Generator Efficiency': 0.90, 'Temperature (°C)': 22, 'Altitude (m)': 40, 'Turbulence Intensity': 0.15 } }
+      },
+      'Dubai': {
+        flag: '🇦🇪', country: 'UAE', coords: '25.3°N, 55.3°E', climate: 'Hot desert, intense sun',
+        solar: { energy: 49.50, unit: 'kWh/day', params: { 'Panel Area (m²)': 50, 'Efficiency': 0.20, 'Irradiance (kWh/m²/day)': 6.6, 'Performance Ratio': 0.75, 'Temperature (°C)': 40, 'Humidity (%)': 55, 'Cloud Cover (%)': 10 } },
+        wind: { energy: 1058.4, unit: 'Watts', params: { 'Rotor Area (m²)': 8000, 'Air Density (kg/m³)': 1.150, 'Wind Speed (m/s)': 5.0, 'Power Coefficient': 0.38, 'Generator Efficiency': 0.88, 'Temperature (°C)': 40, 'Altitude (m)': 5, 'Turbulence Intensity': 0.10 } }
+      },
+      'Sydney': {
+        flag: '🇦🇺', country: 'Australia', coords: '33.9°S, 151.2°E', climate: 'Oceanic, sunny',
+        solar: { energy: 36.75, unit: 'kWh/day', params: { 'Panel Area (m²)': 50, 'Efficiency': 0.20, 'Irradiance (kWh/m²/day)': 5.0, 'Performance Ratio': 0.735, 'Temperature (°C)': 22, 'Humidity (%)': 60, 'Cloud Cover (%)': 35 } },
+        wind: { energy: 2857.6, unit: 'Watts', params: { 'Rotor Area (m²)': 8000, 'Air Density (kg/m³)': 1.225, 'Wind Speed (m/s)': 7.0, 'Power Coefficient': 0.38, 'Generator Efficiency': 0.90, 'Temperature (°C)': 22, 'Altitude (m)': 58, 'Turbulence Intensity': 0.11 } }
+      },
+      'Mumbai': {
+        flag: '🇮🇳', country: 'India', coords: '19.1°N, 72.9°E', climate: 'Tropical, monsoon-heavy',
+        solar: { energy: 35.25, unit: 'kWh/day', params: { 'Panel Area (m²)': 50, 'Efficiency': 0.19, 'Irradiance (kWh/m²/day)': 5.0, 'Performance Ratio': 0.74, 'Temperature (°C)': 30, 'Humidity (%)': 72, 'Cloud Cover (%)': 35 } },
+        wind: { energy: 1425.6, unit: 'Watts', params: { 'Rotor Area (m²)': 8000, 'Air Density (kg/m³)': 1.170, 'Wind Speed (m/s)': 5.5, 'Power Coefficient': 0.36, 'Generator Efficiency': 0.90, 'Temperature (°C)': 30, 'Altitude (m)': 14, 'Turbulence Intensity': 0.17 } }
+      }
+    };
+
+    // Populate the dropdown
+    const select = document.getElementById('citySelect');
+    Object.keys(CITY_DATA).forEach(name => {
+      const city = CITY_DATA[name];
+      const opt = document.createElement('option');
+      opt.value = name;
+      opt.textContent = city.flag + ' ' + name + ' — ' + city.country;
+      select.appendChild(opt);
+    });
+
+    // Check if city was passed via URL (from navbar dropdown)
+    const urlParams = new URLSearchParams(window.location.search);
+    const cityParam = urlParams.get('city');
+    if (cityParam && CITY_DATA[cityParam]) {
+      select.value = cityParam;
+      showCity();
+    }
+
+    // Render parameter rows
+    function renderParams(params) {
+      let html = '';
+      for (const [key, value] of Object.entries(params)) {
+        html += `
+          <div class="flex justify-between py-1.5 border-b border-gray-100 dark:border-white/5 text-sm transition-colors duration-300">
+            <span class="text-gray-600 dark:text-gray-400">${key}</span>
+            <span class="text-gray-900 dark:text-gray-200 font-semibold">${value}</span>
+          </div>
+        `;
+      }
+      return html;
+    }
+
+    // Show selected city data
+    function showCity() {
+      const name = select.value;
+      if (!name || !CITY_DATA[name]) {
+        document.getElementById('cityContent').classList.add('hidden');
+        return;
+      }
+
+      const city = CITY_DATA[name];
+
+      document.getElementById('cityFlag').textContent = city.flag;
+      document.getElementById('cityName').textContent = name;
+      document.getElementById('cityMeta').textContent = city.country + ' · ' + city.coords;
+      document.getElementById('cityClimate').textContent = city.climate;
+
+      document.getElementById('solarValue').textContent = city.solar.energy.toLocaleString();
+      document.getElementById('solarUnit').textContent = city.solar.unit;
+      document.getElementById('solarParams').innerHTML = renderParams(city.solar.params);
+
+      document.getElementById('windValue').textContent = city.wind.energy.toLocaleString();
+      document.getElementById('windUnit').textContent = city.wind.unit;
+      document.getElementById('windParams').innerHTML = renderParams(city.wind.params);
+
+      // Comparison bars
+      document.getElementById('solarBar').style.width = Math.min((city.solar.energy / 60) * 100, 100) + '%';
+      document.getElementById('solarBarLabel').textContent = city.solar.energy + ' ' + city.solar.unit;
+      document.getElementById('windBar').style.width = Math.min((city.wind.energy / 5000) * 100, 100) + '%';
+      document.getElementById('windBarLabel').textContent = city.wind.energy + ' ' + city.wind.unit;
+
+      // Smart note
+      let note = '';
+      if (city.solar.energy > 35) note += name + ' has excellent solar potential. ';
+      else if (city.solar.energy > 25) note += name + ' has moderate solar potential. ';
+      else note += name + ' has limited solar potential due to cloud cover. ';
+      if (city.wind.energy > 2500) note += 'Strong winds make it ideal for wind energy.';
+      else if (city.wind.energy > 1000) note += 'Wind potential is moderate.';
+      else note += 'Wind energy output is relatively low.';
+      document.getElementById('compNote').textContent = note;
+
+      document.getElementById('cityContent').classList.remove('hidden');
+    }
+  </script>
+</body>
+</html>

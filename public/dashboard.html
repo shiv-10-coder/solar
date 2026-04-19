@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EnergyPredict - Dashboard</title>
+  <meta name="description" content="Your Energy Prediction History">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    @keyframes neonPulse {
+      0%, 100% { text-shadow: 0 0 7px rgba(0,240,255,0.5), 0 0 20px rgba(0,240,255,0.3); }
+      50% { text-shadow: 0 0 12px rgba(0,240,255,0.8), 0 0 35px rgba(0,240,255,0.5); }
+    }
+    .neon-text { animation: neonPulse 3s ease-in-out infinite; }
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+    .fade-in-up { animation: fadeInUp 0.6s ease forwards; }
+    @keyframes slideDown { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+  </style>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+    }
+  </script>
+  <script src="/js/theme.js"></script>
+</head>
+<body class="min-h-screen bg-gray-50 text-gray-900 dark:bg-[#050510] dark:text-gray-200 transition-colors duration-300">
+
+  <nav id="navbar" class="sticky top-0 z-[99] bg-white/85 dark:bg-gray-900/85 backdrop-blur-xl border-b border-gray-200 dark:border-white/5 transition-colors duration-300" style="transform: translateZ(0);"></nav>
+
+  <div class="max-w-5xl mx-auto px-4 py-10">
+    <!-- Header -->
+    <div class="text-center mb-8 fade-in-up">
+      <h1 class="text-3xl md:text-4xl font-bold text-cyan-600 dark:text-cyan-400 dark:neon-text mb-3" style="font-family: 'Orbitron', sans-serif;">
+        📊 Dashboard
+      </h1>
+      <p class="text-gray-600 dark:text-gray-400">Your energy prediction history and analytics</p>
+    </div>
+
+    <!-- Stats Cards -->
+    <div id="statsGrid" class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8 fade-in-up">
+      <div class="bg-white border border-gray-200 dark:bg-gray-800/50 dark:border-white/10 rounded-xl p-5 text-center transition-colors duration-300">
+        <div class="text-xs uppercase tracking-widest text-gray-600 dark:text-gray-500 mb-2" style="font-family: 'Orbitron', sans-serif;">Total</div>
+        <div id="statTotal" class="text-3xl font-black text-cyan-600 dark:text-cyan-400" style="font-family: 'Orbitron', sans-serif;">-</div>
+      </div>
+      <div class="bg-white border border-gray-200 dark:bg-gray-800/50 dark:border-white/10 rounded-xl p-5 text-center transition-colors duration-300">
+        <div class="text-xs uppercase tracking-widest text-gray-600 dark:text-gray-500 mb-2" style="font-family: 'Orbitron', sans-serif;">Solar</div>
+        <div id="statSolar" class="text-3xl font-black text-yellow-500 dark:text-yellow-400" style="font-family: 'Orbitron', sans-serif;">-</div>
+      </div>
+      <div class="bg-white border border-gray-200 dark:bg-gray-800/50 dark:border-white/10 rounded-xl p-5 text-center transition-colors duration-300">
+        <div class="text-xs uppercase tracking-widest text-gray-600 dark:text-gray-500 mb-2" style="font-family: 'Orbitron', sans-serif;">Wind</div>
+        <div id="statWind" class="text-3xl font-black text-cyan-600 dark:text-cyan-400" style="font-family: 'Orbitron', sans-serif;">-</div>
+      </div>
+      <div class="bg-white border border-gray-200 dark:bg-gray-800/50 dark:border-white/10 rounded-xl p-5 text-center transition-colors duration-300">
+        <div class="text-xs uppercase tracking-widest text-gray-600 dark:text-gray-500 mb-2" style="font-family: 'Orbitron', sans-serif;">Avg Solar</div>
+        <div id="statAvg" class="text-3xl font-black text-green-600 dark:text-green-400" style="font-family: 'Orbitron', sans-serif;">-</div>
+      </div>
+    </div>
+
+    <!-- History Table -->
+    <div class="bg-white border border-gray-200 dark:bg-gray-800/50 dark:border-white/10 rounded-2xl backdrop-blur-xl overflow-hidden fade-in-up transition-colors duration-300">
+      <h2 class="text-lg font-bold text-cyan-600 dark:text-cyan-400 px-6 pt-6 pb-4" style="font-family: 'Orbitron', sans-serif;">
+        🕐 Recent Predictions
+      </h2>
+
+      <!-- Loading Spinner -->
+      <div id="loading" class="flex justify-center py-12">
+        <div class="w-10 h-10 border-2 border-cyan-100 dark:border-cyan-500/20 border-t-cyan-500 dark:border-t-cyan-400 rounded-full animate-spin"></div>
+      </div>
+
+      <!-- Empty State -->
+      <div id="emptyState" class="hidden text-center py-12 text-gray-500">
+        <p class="text-4xl mb-3">📊</p>
+        <p>No predictions yet. Start calculating!</p>
+        <a href="/predictor.html" class="inline-block mt-4 px-6 py-2 bg-gradient-to-r from-cyan-400 to-cyan-600 text-gray-900 font-bold text-sm uppercase tracking-wider rounded-lg" style="font-family: 'Orbitron', sans-serif;">
+          Go to Predictor
+        </a>
+      </div>
+
+      <!-- Table -->
+      <div id="tableContainer" class="hidden overflow-x-auto">
+        <table class="w-full">
+          <thead>
+            <tr class="border-b border-gray-200 dark:border-white/10 bg-cyan-50 dark:bg-cyan-500/5">
+              <th class="px-6 py-3 text-left text-xs uppercase tracking-widest text-gray-600 dark:text-gray-500" style="font-family: 'Orbitron', sans-serif;">Type</th>
+              <th class="px-6 py-3 text-left text-xs uppercase tracking-widest text-gray-600 dark:text-gray-500" style="font-family: 'Orbitron', sans-serif;">Result</th>
+              <th class="px-6 py-3 text-left text-xs uppercase tracking-widest text-gray-600 dark:text-gray-500" style="font-family: 'Orbitron', sans-serif;">Unit</th>
+              <th class="px-6 py-3 text-left text-xs uppercase tracking-widest text-gray-600 dark:text-gray-500" style="font-family: 'Orbitron', sans-serif;">Date</th>
+            </tr>
+          </thead>
+          <tbody id="historyBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/auth.js"></script>
+  <script src="/js/navbar.js"></script>
+  <script>
+    // Protect this page
+    protectPage();
+
+    // Fetch prediction history from server
+    async function loadHistory() {
+      try {
+        const response = await fetchWithAuth('/api/predict/history');
+        if (!response) return;
+
+        const predictions = await response.json();
+
+        document.getElementById('loading').classList.add('hidden');
+
+        if (predictions.length === 0) {
+          document.getElementById('emptyState').classList.remove('hidden');
+          return;
+        }
+
+        // Calculate stats
+        const solarPredictions = predictions.filter(p => p.type === 'solar');
+        const windPredictions = predictions.filter(p => p.type === 'wind');
+        const avgSolar = solarPredictions.length > 0
+          ? (solarPredictions.reduce((sum, p) => sum + p.result, 0) / solarPredictions.length).toFixed(2)
+          : '0';
+
+        document.getElementById('statTotal').textContent = predictions.length;
+        document.getElementById('statSolar').textContent = solarPredictions.length;
+        document.getElementById('statWind').textContent = windPredictions.length;
+        document.getElementById('statAvg').textContent = avgSolar;
+
+        // Build table rows
+        const tbody = document.getElementById('historyBody');
+        predictions.slice(0, 20).forEach(p => {
+          const row = document.createElement('tr');
+          row.className = 'border-b border-gray-200 dark:border-white/5 hover:bg-gray-50 dark:hover:bg-cyan-500/3 transition-colors duration-300';
+
+          const isSolar = p.type === 'solar';
+          const badgeClass = isSolar
+            ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-500/10 dark:text-yellow-400'
+            : 'bg-cyan-100 text-cyan-700 dark:bg-cyan-500/10 dark:text-cyan-400';
+
+          row.innerHTML = `
+            <td class="px-6 py-3">
+              <span class="px-3 py-1 rounded-full text-xs font-bold uppercase ${badgeClass}">${p.type}</span>
+            </td>
+            <td class="px-6 py-3 font-semibold text-gray-900 dark:text-gray-200">${p.result.toLocaleString(undefined, { maximumFractionDigits: 2 })}</td>
+            <td class="px-6 py-3 text-gray-600 dark:text-gray-400">${p.unit}</td>
+            <td class="px-6 py-3 text-gray-600 dark:text-gray-400">${new Date(p.createdAt).toLocaleDateString()}</td>
+          `;
+          tbody.appendChild(row);
+        });
+
+        document.getElementById('tableContainer').classList.remove('hidden');
+      } catch (error) {
+        console.error('Error loading history:', error);
+        document.getElementById('loading').innerHTML = '<p class="text-red-400">Error loading data</p>';
+      }
+    }
+
+    // Load history when page loads
+    loadHistory();
+  </script>
+</body>
+</html>

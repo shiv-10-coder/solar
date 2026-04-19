@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EnergyPredict - Sign Up</title>
+  <meta name="description" content="Create your EnergyPredict account">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    @keyframes neonPulse {
+      0%, 100% { text-shadow: 0 0 7px rgba(0,240,255,0.5), 0 0 20px rgba(0,240,255,0.3); }
+      50% { text-shadow: 0 0 12px rgba(0,240,255,0.8), 0 0 35px rgba(0,240,255,0.5); }
+    }
+    .neon-text { animation: neonPulse 3s ease-in-out infinite; }
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+    .fade-in-up { animation: fadeInUp 0.6s ease forwards; }
+    @keyframes slideDown { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+  </style>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+    }
+  </script>
+  <script src="/js/theme.js"></script>
+</head>
+<body class="min-h-screen bg-gray-50 text-gray-900 dark:bg-[#050510] dark:text-gray-200 transition-colors duration-300">
+
+  <nav id="navbar" class="sticky top-0 z-[99] bg-white/85 dark:bg-gray-900/85 backdrop-blur-xl border-b border-gray-200 dark:border-white/5 transition-colors duration-300" style="transform: translateZ(0);"></nav>
+
+  <div class="flex items-center justify-center min-h-[calc(100vh-64px)] px-4 relative" style="z-index: 1;">
+    <div class="w-full max-w-md fade-in-up" style="transform: translateZ(-10px);">
+      <div class="bg-white border border-gray-200 dark:bg-gray-800/50 dark:border-white/10 rounded-2xl p-8 backdrop-blur-xl shadow-2xl relative transition-colors duration-300">
+        <h2 class="text-center text-2xl font-bold text-cyan-600 dark:text-cyan-400 mb-2 dark:neon-text" style="font-family: 'Orbitron', sans-serif;">
+          Create Account
+        </h2>
+        <p class="text-center text-gray-500 dark:text-gray-400 text-sm mb-6">Join EnergyPredict today</p>
+
+        <div id="errorMsg" class="hidden bg-pink-100 border border-pink-300 text-pink-600 dark:bg-pink-500/10 dark:border-pink-500/20 dark:text-pink-400 px-4 py-2.5 rounded-lg text-sm mb-4"></div>
+
+        <form id="signupForm" class="space-y-4 relative">
+          <div>
+            <label class="block text-sm text-gray-700 dark:text-gray-300 mb-1">Name</label>
+            <input type="text" id="name" placeholder="Your name" required
+              class="w-full px-4 py-3 rounded-lg bg-gray-100 border border-gray-300 text-gray-900 dark:bg-gray-900/60 dark:border-white/10 dark:text-gray-200 text-sm outline-none focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 dark:focus:border-cyan-400 dark:focus:ring-cyan-400/20 transition-all placeholder-gray-400 dark:placeholder-gray-500">
+          </div>
+          <div>
+            <label class="block text-sm text-gray-700 dark:text-gray-300 mb-1">Email</label>
+            <input type="email" id="email" placeholder="you@example.com" required
+              class="w-full px-4 py-3 rounded-lg bg-gray-100 border border-gray-300 text-gray-900 dark:bg-gray-900/60 dark:border-white/10 dark:text-gray-200 text-sm outline-none focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 dark:focus:border-cyan-400 dark:focus:ring-cyan-400/20 transition-all placeholder-gray-400 dark:placeholder-gray-500">
+          </div>
+          <div>
+            <label class="block text-sm text-gray-700 dark:text-gray-300 mb-1">Password</label>
+            <input type="password" id="password" placeholder="Min 6 characters" required minlength="6"
+              class="w-full px-4 py-3 rounded-lg bg-gray-100 border border-gray-300 text-gray-900 dark:bg-gray-900/60 dark:border-white/10 dark:text-gray-200 text-sm outline-none focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 dark:focus:border-cyan-400 dark:focus:ring-cyan-400/20 transition-all placeholder-gray-400 dark:placeholder-gray-500">
+          </div>
+          <button type="submit" id="submitBtn"
+            class="w-full py-3 bg-gradient-to-r from-cyan-400 to-cyan-600 text-gray-900 font-bold text-sm uppercase tracking-widest rounded-lg hover:scale-[1.02] hover:shadow-lg hover:shadow-cyan-500/30 transition-all relative z-0"
+            style="font-family: 'Orbitron', sans-serif;">
+            Sign Up
+          </button>
+        </form>
+
+        <p class="text-center text-gray-600 dark:text-gray-400 text-sm mt-5 relative">
+          Already have an account? <a href="/index.html" class="text-cyan-600 dark:text-cyan-400 font-semibold hover:underline">Login</a>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/auth.js"></script>
+  <script src="/js/navbar.js"></script>
+  <script>
+    if (isLoggedIn()) {
+      window.location.href = '/predictor.html';
+    }
+
+    document.getElementById('signupForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+
+      const name = document.getElementById('name').value;
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const errorMsg = document.getElementById('errorMsg');
+      const submitBtn = document.getElementById('submitBtn');
+
+      errorMsg.classList.add('hidden');
+      submitBtn.textContent = 'Creating...';
+      submitBtn.disabled = true;
+
+      try {
+        const response = await fetch('/api/auth/signup', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, email, password })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          saveAuth(data.token, data.user);
+          window.location.href = '/predictor.html';
+        } else {
+          errorMsg.textContent = data.message;
+          errorMsg.classList.remove('hidden');
+        }
+      } catch (error) {
+        errorMsg.textContent = 'Network error. Please try again.';
+        errorMsg.classList.remove('hidden');
+      }
+
+      submitBtn.textContent = 'Sign Up';
+      submitBtn.disabled = false;
+    });
+  </script>
+</body>
+</html>

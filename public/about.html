@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EnergyPredict - About</title>
+  <meta name="description" content="Learn about Solar and Wind Energy Prediction formulas">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    @keyframes neonPulse {
+      0%, 100% { text-shadow: 0 0 7px rgba(0,240,255,0.5), 0 0 20px rgba(0,240,255,0.3); }
+      50% { text-shadow: 0 0 12px rgba(0,240,255,0.8), 0 0 35px rgba(0,240,255,0.5); }
+    }
+    .neon-text { animation: neonPulse 3s ease-in-out infinite; }
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+    .fade-in-up { animation: fadeInUp 0.6s ease forwards; }
+    @keyframes slideDown { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+  </style>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+    }
+  </script>
+  <script src="/js/theme.js"></script>
+</head>
+<body class="min-h-screen bg-gray-50 text-gray-900 dark:bg-[#050510] dark:text-gray-200 transition-colors duration-300">
+
+  <nav id="navbar" class="sticky top-0 z-[99] bg-white/85 dark:bg-gray-900/85 backdrop-blur-xl border-b border-gray-200 dark:border-white/5 transition-colors duration-300" style="transform: translateZ(0);"></nav>
+
+  <div class="max-w-5xl mx-auto px-4 py-10">
+    <div class="text-center mb-10 fade-in-up">
+      <h1 class="text-3xl md:text-4xl font-bold text-cyan-600 dark:text-cyan-400 dark:neon-text mb-3" style="font-family: 'Orbitron', sans-serif;">
+        About EnergyPredict
+      </h1>
+      <p class="text-gray-600 dark:text-gray-400">Smart renewable energy prediction using scientific formulas</p>
+    </div>
+
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- Solar Card -->
+      <div class="bg-white border border-gray-200 dark:bg-gray-800/50 dark:border-white/10 rounded-2xl p-7 backdrop-blur-xl fade-in-up hover:border-cyan-300 dark:hover:border-cyan-500/20 hover:shadow-lg hover:shadow-cyan-500/10 dark:hover:shadow-cyan-500/5 transition-colors duration-300 hover:-translate-y-1">
+        <div class="text-4xl mb-3">☀️</div>
+        <h2 class="text-lg font-bold text-cyan-600 dark:text-cyan-400 mb-3" style="font-family: 'Orbitron', sans-serif;">Solar Energy</h2>
+        <p class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed mb-4">Uses sunlight to generate electricity via photovoltaic panels. Our predictor calculates daily energy output based on your panel specifications.</p>
+        <ul class="space-y-2 text-sm text-gray-600 dark:text-gray-400 mb-4">
+          <li class="flex items-center gap-2"><span class="text-cyan-600 dark:text-cyan-400">▸</span> Panel Area (m²)</li>
+          <li class="flex items-center gap-2"><span class="text-cyan-600 dark:text-cyan-400">▸</span> Panel Efficiency (15–22%)</li>
+          <li class="flex items-center gap-2"><span class="text-cyan-600 dark:text-cyan-400">▸</span> Solar Irradiance (kWh/m²/day)</li>
+          <li class="flex items-center gap-2"><span class="text-cyan-600 dark:text-cyan-400">▸</span> Performance Ratio</li>
+        </ul>
+        <div class="bg-cyan-50 dark:bg-cyan-500/5 border border-cyan-200 dark:border-cyan-500/10 rounded-lg p-4 transition-colors duration-300">
+          <code class="text-green-600 dark:text-green-400 text-sm font-mono">E = Area × Efficiency × Irradiance × PR</code>
+        </div>
+      </div>
+
+      <!-- Wind Card -->
+      <div class="bg-white border border-gray-200 dark:bg-gray-800/50 dark:border-white/10 rounded-2xl p-7 backdrop-blur-xl fade-in-up hover:border-cyan-300 dark:hover:border-cyan-500/20 hover:shadow-lg hover:shadow-cyan-500/10 dark:hover:shadow-cyan-500/5 transition-colors duration-300 hover:-translate-y-1" style="animation-delay: 0.15s;">
+        <div class="text-4xl mb-3">🌬️</div>
+        <h2 class="text-lg font-bold text-cyan-600 dark:text-cyan-400 mb-3" style="font-family: 'Orbitron', sans-serif;">Wind Energy</h2>
+        <p class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed mb-4">Uses wind turbines to convert kinetic energy into electricity. Our model uses the standard wind power equation.</p>
+        <ul class="space-y-2 text-sm text-gray-600 dark:text-gray-400 mb-4">
+          <li class="flex items-center gap-2"><span class="text-cyan-600 dark:text-cyan-400">▸</span> Rotor Swept Area (m²)</li>
+          <li class="flex items-center gap-2"><span class="text-cyan-600 dark:text-cyan-400">▸</span> Air Density (kg/m³)</li>
+          <li class="flex items-center gap-2"><span class="text-cyan-600 dark:text-cyan-400">▸</span> Wind Speed (m/s)</li>
+          <li class="flex items-center gap-2"><span class="text-cyan-600 dark:text-cyan-400">▸</span> Power Coefficient (Cp)</li>
+          <li class="flex items-center gap-2"><span class="text-cyan-600 dark:text-cyan-400">▸</span> Generator Efficiency</li>
+        </ul>
+        <div class="bg-cyan-50 dark:bg-cyan-500/5 border border-cyan-200 dark:border-cyan-500/10 rounded-lg p-4 transition-colors duration-300">
+          <code class="text-green-600 dark:text-green-400 text-sm font-mono">P = 0.5 × ρ × A × V³ × Cp × η</code>
+        </div>
+      </div>
+
+      <!-- Objective Card -->
+      <div class="bg-white border border-gray-200 dark:bg-gray-800/50 dark:border-white/10 rounded-2xl p-7 backdrop-blur-xl fade-in-up hover:border-cyan-300 dark:hover:border-cyan-500/20 hover:shadow-lg hover:shadow-cyan-500/10 dark:hover:shadow-cyan-500/5 transition-colors duration-300 hover:-translate-y-1" style="animation-delay: 0.3s;">
+        <div class="text-4xl mb-3">🎯</div>
+        <h2 class="text-lg font-bold text-cyan-600 dark:text-cyan-400 mb-3" style="font-family: 'Orbitron', sans-serif;">Our Objective</h2>
+        <p class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed mb-4">Promote renewable energy adoption by providing accessible, accurate energy prediction tools for students, engineers, and enthusiasts.</p>
+        <ul class="space-y-2 text-sm text-gray-600 dark:text-gray-400">
+          <li class="flex items-center gap-2"><span class="text-cyan-600 dark:text-cyan-400">▸</span> Easy-to-use prediction interface</li>
+          <li class="flex items-center gap-2"><span class="text-cyan-600 dark:text-cyan-400">▸</span> Track your calculation history</li>
+          <li class="flex items-center gap-2"><span class="text-cyan-600 dark:text-cyan-400">▸</span> Pre-computed city data</li>
+          <li class="flex items-center gap-2"><span class="text-cyan-600 dark:text-cyan-400">▸</span> Scientific accuracy</li>
+        </ul>
+      </div>
+    </div>
+
+
+  </div>
+
+  <script src="/js/auth.js"></script>
+  <script src="/js/navbar.js"></script>
+</body>
+</html>

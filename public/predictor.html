@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EnergyPredict - Predictor</title>
+  <meta name="description" content="Calculate Solar and Wind Energy Predictions">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    @keyframes neonPulse {
+      0%, 100% { text-shadow: 0 0 7px rgba(0,240,255,0.5), 0 0 20px rgba(0,240,255,0.3); }
+      50% { text-shadow: 0 0 12px rgba(0,240,255,0.8), 0 0 35px rgba(0,240,255,0.5); }
+    }
+    .neon-text { animation: neonPulse 3s ease-in-out infinite; }
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+    .fade-in-up { animation: fadeInUp 0.6s ease forwards; }
+    @keyframes slideDown { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes countUp { from { opacity: 0; transform: scale(0.5); } to { opacity: 1; transform: scale(1); } }
+    .count-up { animation: countUp 0.8s ease forwards; }
+  </style>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+    }
+  </script>
+  <script src="/js/theme.js"></script>
+</head>
+<body class="min-h-screen bg-gray-50 text-gray-900 dark:bg-[#050510] dark:text-gray-200 transition-colors duration-300">
+
+  <nav id="navbar" class="sticky top-0 z-[99] bg-white/85 dark:bg-gray-900/85 backdrop-blur-xl border-b border-gray-200 dark:border-white/5 transition-colors duration-300" style="transform: translateZ(0);"></nav>
+
+  <div class="max-w-2xl mx-auto px-4 py-10">
+    <!-- Header -->
+    <div class="text-center mb-8 fade-in-up">
+      <h1 class="text-3xl md:text-4xl font-bold text-cyan-600 dark:text-cyan-400 dark:neon-text mb-3" style="font-family: 'Orbitron', sans-serif;">
+        Energy Predictor
+      </h1>
+      <p class="text-gray-600 dark:text-gray-400">Estimate renewable energy output using scientific formulas</p>
+    </div>
+
+    <!-- Tab Buttons -->
+    <div class="flex justify-center gap-3 mb-6">
+      <button id="solarTab" onclick="switchTab('solar')"
+        class="px-6 py-3 rounded-xl text-sm font-bold tracking-wider transition-all border"
+        style="font-family: 'Orbitron', sans-serif;">
+        ☀️ Solar Energy
+      </button>
+      <button id="windTab" onclick="switchTab('wind')"
+        class="px-6 py-3 rounded-xl text-sm font-bold tracking-wider transition-all border"
+        style="font-family: 'Orbitron', sans-serif;">
+        🌬️ Wind Energy
+      </button>
+    </div>
+
+    <!-- Prediction Card -->
+    <div class="bg-white border border-gray-200 dark:bg-gray-800/50 dark:border-white/10 rounded-2xl p-8 backdrop-blur-xl shadow-2xl fade-in-up transition-colors duration-300">
+      <h2 id="formTitle" class="text-lg font-bold text-cyan-600 dark:text-cyan-400 mb-5" style="font-family: 'Orbitron', sans-serif;"></h2>
+
+      <!-- Solar Form -->
+      <form id="solarForm" class="space-y-4">
+        <div>
+          <label class="block text-sm text-gray-700 dark:text-gray-300 mb-1">Panel Area (m²)</label>
+          <input type="number" id="solarArea" placeholder="e.g. 50" required
+            class="w-full px-4 py-3 rounded-lg bg-gray-100 border border-gray-300 text-gray-900 dark:bg-gray-900/60 dark:border-white/10 dark:text-gray-200 text-sm outline-none focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 dark:focus:border-cyan-400 dark:focus:ring-cyan-400/20 transition-all placeholder-gray-400 dark:placeholder-gray-500">
+          <p class="text-xs text-gray-500 mt-1">Total solar panel surface area</p>
+        </div>
+        <div>
+          <label class="block text-sm text-gray-700 dark:text-gray-300 mb-1">Panel Efficiency</label>
+          <input type="number" step="0.01" id="solarEfficiency" placeholder="e.g. 0.18" required
+            class="w-full px-4 py-3 rounded-lg bg-gray-100 border border-gray-300 text-gray-900 dark:bg-gray-900/60 dark:border-white/10 dark:text-gray-200 text-sm outline-none focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 dark:focus:border-cyan-400 dark:focus:ring-cyan-400/20 transition-all placeholder-gray-400 dark:placeholder-gray-500">
+          <p class="text-xs text-gray-500 mt-1">Typical range: 0.15 – 0.22</p>
+        </div>
+        <div>
+          <label class="block text-sm text-gray-700 dark:text-gray-300 mb-1">Solar Irradiance (kWh/m²/day)</label>
+          <input type="number" step="0.01" id="solarIrradiance" placeholder="e.g. 5.5" required
+            class="w-full px-4 py-3 rounded-lg bg-gray-100 border border-gray-300 text-gray-900 dark:bg-gray-900/60 dark:border-white/10 dark:text-gray-200 text-sm outline-none focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 dark:focus:border-cyan-400 dark:focus:ring-cyan-400/20 transition-all placeholder-gray-400 dark:placeholder-gray-500">
+          <p class="text-xs text-gray-500 mt-1">Average sunlight energy per day</p>
+        </div>
+        <div>
+          <label class="block text-sm text-gray-700 dark:text-gray-300 mb-1">Performance Ratio</label>
+          <input type="number" step="0.01" id="solarPR" placeholder="e.g. 0.75" required
+            class="w-full px-4 py-3 rounded-lg bg-gray-100 border border-gray-300 text-gray-900 dark:bg-gray-900/60 dark:border-white/10 dark:text-gray-200 text-sm outline-none focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 dark:focus:border-cyan-400 dark:focus:ring-cyan-400/20 transition-all placeholder-gray-400 dark:placeholder-gray-500">
+          <p class="text-xs text-gray-500 mt-1">System loss factor (0.5 – 0.9)</p>
+        </div>
+        <button type="submit" id="solarSubmitBtn"
+          class="w-full py-3 bg-gradient-to-r from-yellow-400 to-orange-500 text-gray-900 font-bold text-sm uppercase tracking-widest rounded-lg hover:scale-[1.02] hover:shadow-lg hover:shadow-yellow-500/30 transition-all mt-2"
+          style="font-family: 'Orbitron', sans-serif;">
+          ☀️ Calculate Solar Energy
+        </button>
+      </form>
+
+      <!-- Wind Form -->
+      <form id="windForm" class="space-y-4 hidden">
+        <div>
+          <label class="block text-sm text-gray-700 dark:text-gray-300 mb-1">Rotor Swept Area (m²)</label>
+          <input type="number" id="windArea" placeholder="e.g. 8000" required
+            class="w-full px-4 py-3 rounded-lg bg-gray-100 border border-gray-300 text-gray-900 dark:bg-gray-900/60 dark:border-white/10 dark:text-gray-200 text-sm outline-none focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 dark:focus:border-cyan-400 dark:focus:ring-cyan-400/20 transition-all placeholder-gray-400 dark:placeholder-gray-500">
+          <p class="text-xs text-gray-500 mt-1">Blade swept area of turbine</p>
+        </div>
+        <div>
+          <label class="block text-sm text-gray-700 dark:text-gray-300 mb-1">Air Density (kg/m³)</label>
+          <input type="number" step="0.001" id="windAirDensity" placeholder="1.225" value="1.225" required
+            class="w-full px-4 py-3 rounded-lg bg-gray-100 border border-gray-300 text-gray-900 dark:bg-gray-900/60 dark:border-white/10 dark:text-gray-200 text-sm outline-none focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 dark:focus:border-cyan-400 dark:focus:ring-cyan-400/20 transition-all placeholder-gray-400 dark:placeholder-gray-500">
+          <p class="text-xs text-gray-500 mt-1">Standard: 1.225 kg/m³</p>
+        </div>
+        <div>
+          <label class="block text-sm text-gray-700 dark:text-gray-300 mb-1">Wind Speed (m/s)</label>
+          <input type="number" step="0.01" id="windVelocity" placeholder="e.g. 12" required
+            class="w-full px-4 py-3 rounded-lg bg-gray-100 border border-gray-300 text-gray-900 dark:bg-gray-900/60 dark:border-white/10 dark:text-gray-200 text-sm outline-none focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 dark:focus:border-cyan-400 dark:focus:ring-cyan-400/20 transition-all placeholder-gray-400 dark:placeholder-gray-500">
+          <p class="text-xs text-gray-500 mt-1">Average wind speed at hub height</p>
+        </div>
+        <div>
+          <label class="block text-sm text-gray-700 dark:text-gray-300 mb-1">Power Coefficient (Cp)</label>
+          <input type="number" step="0.01" id="windCp" placeholder="e.g. 0.4" required
+            class="w-full px-4 py-3 rounded-lg bg-gray-100 border border-gray-300 text-gray-900 dark:bg-gray-900/60 dark:border-white/10 dark:text-gray-200 text-sm outline-none focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 dark:focus:border-cyan-400 dark:focus:ring-cyan-400/20 transition-all placeholder-gray-400 dark:placeholder-gray-500">
+          <p class="text-xs text-gray-500 mt-1">Typical: 0.3 – 0.5 (Betz limit: 0.593)</p>
+        </div>
+        <div>
+          <label class="block text-sm text-gray-700 dark:text-gray-300 mb-1">Generator Efficiency</label>
+          <input type="number" step="0.01" id="windEfficiency" placeholder="e.g. 0.9" required
+            class="w-full px-4 py-3 rounded-lg bg-gray-100 border border-gray-300 text-gray-900 dark:bg-gray-900/60 dark:border-white/10 dark:text-gray-200 text-sm outline-none focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 dark:focus:border-cyan-400 dark:focus:ring-cyan-400/20 transition-all placeholder-gray-400 dark:placeholder-gray-500">
+          <p class="text-xs text-gray-500 mt-1">Electrical conversion efficiency</p>
+        </div>
+        <button type="submit" id="windSubmitBtn"
+          class="w-full py-3 bg-gradient-to-r from-cyan-400 to-blue-600 text-gray-900 font-bold text-sm uppercase tracking-widest rounded-lg hover:scale-[1.02] hover:shadow-lg hover:shadow-cyan-500/30 transition-all mt-2"
+          style="font-family: 'Orbitron', sans-serif;">
+          🌬️ Calculate Wind Energy
+        </button>
+      </form>
+    </div>
+
+    <!-- Result Section (hidden by default) -->
+    <div id="resultSection" class="hidden mt-8">
+      <div class="bg-white border border-gray-200 dark:bg-gray-800/50 dark:border-white/10 rounded-2xl p-8 backdrop-blur-xl shadow-2xl text-center fade-in-up transition-colors duration-300">
+        <div id="resultIcon" class="text-5xl mb-3"></div>
+        <h2 id="resultTitle" class="text-sm uppercase tracking-widest text-gray-500 dark:text-gray-400 mb-2" style="font-family: 'Orbitron', sans-serif;"></h2>
+        <div id="resultValue" class="text-5xl font-black my-4 count-up" style="font-family: 'Orbitron', sans-serif;"></div>
+        <div id="resultUnit" class="text-gray-500 dark:text-gray-400 text-lg mb-6"></div>
+
+        <!-- Parameters Used -->
+        <div class="text-left border-t border-gray-200 dark:border-white/10 pt-4">
+          <h3 class="text-xs uppercase tracking-widest text-gray-600 dark:text-gray-500 mb-3" style="font-family: 'Orbitron', sans-serif;">Parameters Used</h3>
+          <div id="resultParams"></div>
+        </div>
+
+        <div class="flex justify-center gap-3 mt-6">
+          <button onclick="document.getElementById('resultSection').classList.add('hidden'); window.scrollTo({top: 0, behavior: 'smooth'});"
+            class="px-6 py-2.5 bg-gradient-to-r from-cyan-400 to-cyan-600 text-gray-900 font-bold text-sm uppercase tracking-wider rounded-lg hover:scale-105 transition-all"
+            style="font-family: 'Orbitron', sans-serif;">
+            Calculate Again
+          </button>
+          <a href="/dashboard.html"
+            class="px-6 py-2.5 border border-cyan-600 dark:border-cyan-500/30 text-cyan-600 dark:text-cyan-400 text-sm uppercase tracking-wider rounded-lg hover:bg-cyan-50 dark:hover:bg-cyan-500/10 transition-all font-bold"
+            style="font-family: 'Orbitron', sans-serif;">
+            View History
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/auth.js"></script>
+  <script src="/js/navbar.js"></script>
+  <script>
+    // Protect this page - must be logged in
+    protectPage();
+
+    let currentTab = 'solar';
+
+    // Switch between Solar and Wind tabs
+    function switchTab(tab) {
+      currentTab = tab;
+      document.getElementById('solarForm').classList.toggle('hidden', tab !== 'solar');
+      document.getElementById('windForm').classList.toggle('hidden', tab !== 'wind');
+      document.getElementById('resultSection').classList.add('hidden');
+
+      // Update tab button styles
+      const solarTab = document.getElementById('solarTab');
+      const windTab = document.getElementById('windTab');
+
+      if (tab === 'solar') {
+        solarTab.className = 'px-6 py-3 rounded-xl text-sm font-bold tracking-wider transition-all border bg-yellow-100 text-yellow-600 border-yellow-200 shadow-lg shadow-yellow-100 dark:bg-yellow-500/10 dark:text-yellow-400 dark:border-yellow-500/40 dark:shadow-yellow-500/10';
+        windTab.className = 'px-6 py-3 rounded-xl text-sm font-bold tracking-wider transition-all border bg-white text-gray-600 border-gray-200 dark:bg-gray-800/50 dark:text-gray-400 dark:border-white/10';
+        document.getElementById('formTitle').textContent = '☀️ Solar Energy Prediction';
+      } else {
+        windTab.className = 'px-6 py-3 rounded-xl text-sm font-bold tracking-wider transition-all border bg-cyan-100 text-cyan-600 border-cyan-200 shadow-lg shadow-cyan-100 dark:bg-cyan-500/10 dark:text-cyan-400 dark:border-cyan-500/40 dark:shadow-cyan-500/10';
+        solarTab.className = 'px-6 py-3 rounded-xl text-sm font-bold tracking-wider transition-all border bg-white text-gray-600 border-gray-200 dark:bg-gray-800/50 dark:text-gray-400 dark:border-white/10';
+        document.getElementById('formTitle').textContent = '🌬️ Wind Energy Prediction';
+      }
+    }
+
+    // Initialize with solar tab
+    switchTab('solar');
+
+    // Show result on page
+    function showResult(data, params) {
+      const isSolar = data.type === 'solar';
+      document.getElementById('resultIcon').textContent = isSolar ? '☀️' : '🌬️';
+      document.getElementById('resultTitle').textContent = isSolar ? 'Solar Energy Output' : 'Wind Energy Output';
+      document.getElementById('resultValue').textContent = data.energy.toLocaleString();
+      document.getElementById('resultValue').className = 'text-5xl font-black my-4 count-up ' + (isSolar ? 'text-yellow-400' : 'text-cyan-400');
+      document.getElementById('resultValue').style.textShadow = isSolar ? '0 0 20px rgba(255,230,0,0.4)' : '0 0 20px rgba(0,240,255,0.4)';
+      document.getElementById('resultValue').style.fontFamily = "'Orbitron', sans-serif";
+      document.getElementById('resultUnit').textContent = data.unit;
+
+      // Show parameters
+      let paramsHTML = '';
+      for (const [key, value] of Object.entries(params)) {
+        paramsHTML += `
+          <div class="flex justify-between py-2 border-b border-gray-200 dark:border-white/5 text-sm">
+            <span class="text-gray-600 dark:text-gray-400">${key}</span>
+            <span class="text-gray-900 dark:text-gray-200 font-semibold">${value}</span>
+          </div>
+        `;
+      }
+      document.getElementById('resultParams').innerHTML = paramsHTML;
+      document.getElementById('resultSection').classList.remove('hidden');
+      document.getElementById('resultSection').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // Handle Solar form submit
+    document.getElementById('solarForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const btn = document.getElementById('solarSubmitBtn');
+      btn.textContent = 'Calculating...';
+      btn.disabled = true;
+
+      const body = {
+        area: document.getElementById('solarArea').value,
+        efficiency: document.getElementById('solarEfficiency').value,
+        irradiance: document.getElementById('solarIrradiance').value,
+        pr: document.getElementById('solarPR').value
+      };
+
+      try {
+        const res = await fetchWithAuth('/api/predict/solar', {
+          method: 'POST',
+          body: JSON.stringify(body)
+        });
+        const data = await res.json();
+        showResult(data, {
+          'Panel Area (m²)': body.area,
+          'Efficiency': body.efficiency,
+          'Irradiance (kWh/m²/day)': body.irradiance,
+          'Performance Ratio': body.pr
+        });
+      } catch (err) {
+        alert('Error calculating. Please try again.');
+      }
+
+      btn.textContent = '☀️ Calculate Solar Energy';
+      btn.disabled = false;
+    });
+
+    // Handle Wind form submit
+    document.getElementById('windForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const btn = document.getElementById('windSubmitBtn');
+      btn.textContent = 'Calculating...';
+      btn.disabled = true;
+
+      const body = {
+        area: document.getElementById('windArea').value,
+        airDensity: document.getElementById('windAirDensity').value,
+        velocity: document.getElementById('windVelocity').value,
+        cp: document.getElementById('windCp').value,
+        efficiency: document.getElementById('windEfficiency').value
+      };
+
+      try {
+        const res = await fetchWithAuth('/api/predict/wind', {
+          method: 'POST',
+          body: JSON.stringify(body)
+        });
+        const data = await res.json();
+        showResult(data, {
+          'Rotor Area (m²)': body.area,
+          'Air Density (kg/m³)': body.airDensity,
+          'Wind Speed (m/s)': body.velocity,
+          'Power Coefficient': body.cp,
+          'Generator Efficiency': body.efficiency
+        });
+      } catch (err) {
+        alert('Error calculating. Please try again.');
+      }
+
+      btn.textContent = '🌬️ Calculate Wind Energy';
+      btn.disabled = false;
+    });
+  </script>
+</body>
+</html>

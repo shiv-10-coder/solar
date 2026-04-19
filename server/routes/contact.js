@@ -1,13 +1,14 @@
-import express from 'express';
-import Contact from '../models/Contact.js';
+const express = require('express');
+const Contact = require('../models/Contact');
 
 const router = express.Router();
 
-// POST /api/contact
+// POST /api/contact - Save a contact form submission
 router.post('/', async (req, res) => {
   try {
     const { name, email, message } = req.body;
 
+    // Save contact message to database
     const contact = new Contact({ name, email, message });
     await contact.save();
 
@@ -18,4 +19,4 @@ router.post('/', async (req, res) => {
   }
 });
 
-export default router;
+module.exports = router;

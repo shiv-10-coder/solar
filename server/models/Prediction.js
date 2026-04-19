@@ -1,24 +1,23 @@
-import mongoose from 'mongoose';
+const mongoose = require('mongoose');
 
+// Prediction schema - stores each energy prediction made by users
 const predictionSchema = new mongoose.Schema({
   userId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
+    ref: 'User',        // Links to the User who made this prediction
     required: true
   },
   type: {
     type: String,
-    enum: ['solar', 'wind'],
+    enum: ['solar', 'wind'],   // Only allows 'solar' or 'wind'
     required: true
   },
   inputs: {
-    // Solar: area, efficiency, irradiance, pr
-    // Wind: area, airDensity, velocity, cp, efficiency
-    type: Object,
+    type: Object,        // Stores all input parameters (area, efficiency, etc.)
     required: true
   },
   result: {
-    type: Number,
+    type: Number,        // The calculated energy value
     required: true
   },
   unit: {
@@ -26,7 +25,7 @@ const predictionSchema = new mongoose.Schema({
     default: 'kWh'
   }
 }, {
-  timestamps: true
+  timestamps: true       // Adds createdAt and updatedAt
 });
 
-export default mongoose.model('Prediction', predictionSchema);
+module.exports = mongoose.model('Prediction', predictionSchema);
