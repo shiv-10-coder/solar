@@ -19,7 +19,15 @@ function getUser() {
 
 // Check if user is logged in
 function isLoggedIn() {
-  return getToken() !== null;
+  const token = getToken();
+  const user = getUser();
+  // If we have a token but no user (or vice versa), state is invalid. Clear it.
+  if ((token && !user) || (!token && user)) {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    return false;
+  }
+  return token !== null && user !== null;
 }
 
 // Save token and user info after login/signup
