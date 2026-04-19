@@ -32,14 +32,40 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', message: 'EnergyPredict API is running' });
 });
 
-// ================= CONNECT TO MONGODB & START SERVER =================
-mongoose.connect(process.env.MONGODB_URI)
-  .then(() => {
+// ================= CONNECT TO MONGODB =================
+let cachedDb = null;
+
+async function connectToDatabase() {
+  if (cachedDb) {
+    return cachedDb;
+  }
+  
+  if (!process.env.MONGODB_URI) {
+    console.error('Missing MONGODB_URI environment variable');
+    return null;
+  }
+
+  try {
+    const db = await mongoose.connect(process.env.MONGODB_URI);
+    cachedDb = db;
     console.log('MongoDB connected');
-    app.listen(PORT, () => {
-      console.log('Server running on http://localhost:' + PORT);
-    });
-  })
-  .catch((err) => {
+    return db;
+  } catch (err) {
     console.error('MongoDB connection error:', err);
+    return null;
+  }
+}
+
+// Connect immediately
+connectToDatabase();
+
+// ================= EXPORT OR START SERVER =================
+// If running locally, start the server
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log('Server running on http://localhost:' + PORT);
   });
+}
+
+// Export the app for Vercel serverless functions
+module.exports = app;
